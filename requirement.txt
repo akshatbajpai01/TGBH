@@ -1,0 +1,14 @@
+pip instal the following in your terminal:
+Flask==2.3.2
+Flask-Cors==4.0.0
+twilio==8.3.0
+requests==2.31.0
+google-generativeai==0.3.2
+google-cloud-texttospeech==2.14.0
+python-dotenv==1.0.0
+gtts==2.4.0
+GOOGLE_APPLICATION_CREDENTIALS= {path to your json key}
+SARVAM_API_KEY = (YOUR_SWARNAM_API_KEY)
+GOOGLE_API_KEY = (YOUR_GOOGLE_API_KEY)
+TWILIO_ACCOUNT_SID = (YOUR_TWILIO_ACCOUNT_SID)
+TWILIO_AUTH_TOKEN = (YOUR_TWILIO_AUTH_TOKEN)
