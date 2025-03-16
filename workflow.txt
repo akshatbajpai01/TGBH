@@ -1,0 +1,143 @@
+1. Initial Setup
+Load Environment Variables:
+
+API keys for Google, Sarvam, and Twilio are loaded from the .env file.
+
+Logging is configured for debugging and monitoring.
+
+Initialize Services:
+
+Google Gemini AI is configured for generating responses.
+
+Google Cloud Text-to-Speech client is initialized.
+
+Twilio client is set up for WhatsApp messaging.
+
+2. Workflow for Text-Based Interactions
+Step 1: Receive Text Message
+A user sends a text message via WhatsApp.
+
+The message is received by the /whatsapp route.
+
+Step 2: Parse the Message
+Extract the message body (Body) and sender information (From).
+
+Check if the message contains a keyword like voice: to determine if the user wants a voice response.
+
+Step 3: Detect Language
+Use detect_language_robust to determine the language of the incoming text.
+
+If the language is not English, translate the text to English for processing by Gemini AI.
+
+Step 4: Generate Response
+Pass the text to get_gemini_response for generating a response.
+
+Gemini AI provides a response in English.
+
+Step 5: Translate Response
+If the original message was not in English, translate the Gemini response back to the detected language.
+
+Step 6: Send Response
+If the user requested a voice response:
+
+Convert the text response to speech using text_to_speech or text_to_speech_gtts.
+
+Send the audio file as a voice message via Twilio.
+
+If no voice response was requested:
+
+Send the text response directly via WhatsApp.
+
+3. Workflow for Voice-Based Interactions
+Step 1: Receive Voice Message
+A user sends a voice message via WhatsApp.
+
+The message is received by the /whatsapp route.
+
+Step 2: Download Audio File
+Extract the MediaUrl0 from the request to get the URL of the audio file.
+
+Download the audio file and save it locally as temp_audio.wav.
+
+Step 3: Convert Speech to Text
+Use speech_to_text_translate to convert the audio file to text.
+
+The Sarvam AI API processes the audio and returns a transcript.
+
+Step 4: Detect Language
+Use detect_language_robust to determine the language of the transcript.
+
+If the language is not English, translate the transcript to English for processing by Gemini AI.
+
+Step 5: Generate Response
+Pass the English text to get_gemini_response for generating a response.
+
+Gemini AI provides a response in English.
+
+Step 6: Translate Response
+If the original transcript was not in English, translate the Gemini response back to the detected language.
+
+Step 7: Convert Response to Speech
+Use text_to_speech or text_to_speech_gtts to convert the text response to speech.
+
+Save the audio file locally as temp_tts_<language>.mp3.
+
+Step 8: Send Response
+Send the audio file as a voice message via Twilio.
+
+Include the text response as a fallback in case the audio cannot be played.
+
+4. Workflow for Translation Requests
+Step 1: Receive Translation Request
+A user sends a text message starting with Translate to <language>: <text>.
+
+The message is received by the /whatsapp route.
+
+Step 2: Parse the Request
+Extract the target language and text to be translated.
+
+Step 3: Detect Source Language
+Use detect_language to determine the source language of the text.
+
+Step 4: Translate Text
+Use translate_text to translate the text to the target language.
+
+Step 5: Send Response
+Send the translated text as a WhatsApp message.
+
+5. Workflow for External API Requests
+a. /translate-text Route
+Receive Request:
+
+A POST request is sent to /translate-text with JSON data containing text, source_language, and target_language.
+
+Translate Text:
+
+Use translate_text to translate the text.
+
+Return Response:
+
+Return the translated text as a JSON response.
+
+b. /text-to-speech Route
+Receive Request:
+
+A POST request is sent to /text-to-speech with JSON data containing text and language.
+
+Convert Text to Speech:
+
+Use text_to_speech or text_to_speech_gtts to generate an audio file.
+
+Encode Audio:
+
+Encode the audio file as base64.
+
+Return Response:
+
+Return the base64-encoded audio and content type as a JSON response.
+
+Error Handling:
+
+If any step fails (e.g., API call, file processing), an appropriate error message is returned.
+
+Fallback mechanisms (e.g., gTTS for TTS) are used if primary services fail.
